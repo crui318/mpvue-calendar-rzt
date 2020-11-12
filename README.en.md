@@ -15,4 +15,4 @@
   </a>
 </p>
 
-<h1 align="center">mpvue-calendar</h1>
+<h1 align="center">mpvue-calendar-rzt</h1>

@@ -15,25 +15,25 @@
   </a>
 </p>
 
-<h1 align="center">mpvue-calendar</h1>
+<h1 align="center">mpvue-calendar-rzt</h1>
 
-基于vue-calendar的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
+基于vue-calendar-rzt的适配**mpvue**平台的的微信小程序日历组件，现在已可以使用在**浏览器端**
 ## 预览
 ![比邻binlive](http://img.binlive.cn/xcx.jpg)
 
 #### 🖥  [点击浏览器端预览](http://preview.binlive.cn/mpvue-calendar#/ "浏览器端预览")
 ## 安装
 ```
-npm i mpvue-calendar -S
+npm i mpvue-calendar-rzt -S
 ```
 ## 使用
-- `import Calendar from 'mpvue-calendar'` 引入组件
-- `import 'mpvue-calendar/src/style.css'` 引入样式文件(mpvue 小程序端)
+- `import Calendar from 'mpvue-calendar-rzt'` 引入组件
+- `import 'mpvue-calendar-rzt/src/style.css'` 引入样式文件(mpvue 小程序端)
 - `components`中注册组件`Calendar `
 - `template`中使用组件`<Calendar />`
 
 ⚠️在浏览器端使用要引入下面`browser-style.css`替换上面的`style.css`
-- `import 'mpvue-calendar/src/browser-style.css'` 引入样式文件(浏览器端)
+- `import 'mpvue-calendar-rzt/src/browser-style.css'` 引入样式文件(浏览器端)
 
 ## 参数及方法
 | 参数or方法  | 类型  | 说明  | 默认值  |
@@ -47,6 +47,7 @@ npm i mpvue-calendar -S
 | events  | Object  | 自定义事件备注  |-|
 | lunar  | Boolean  | 是否显示农历  |`false`|
 | monFirst   | Boolean  | 是否日期以星期一作为开始  |`false` (默认为星期日开头)|
+| showWeek   | Boolean  | 是否显示左侧周数  |`false` (默认为不显示)|
 | completion   | Boolean  | 是否补全日期，设为`true`时会以每月6行展示，不足6行的会用下月日期补全  |`false`|
 | clean  | Boolean  | 是否为简洁模式，简洁模式下自定义备注会显示为圆点   |`false`|
 | now  | Boolean or String | 是否显示今日，传入字符串时可以自定义日历上今日的文字   |`true`|
@@ -106,8 +107,8 @@ tileContent参数可以为具体某日定义一个class名，还可以插入一�
 </template>
 
 <script>
-import Calendar from 'mpvue-calendar'
-import 'mpvue-calendar/src/style.css'
+import Calendar from 'mpvue-calendar-rzt'
+import 'mpvue-calendar-rzt/src/style.css'
 import arrowLeft from '../assets/arrowLeft.png' //使用自定义箭头图片
 
 export default {

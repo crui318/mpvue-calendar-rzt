@@ -1,13 +1,12 @@
 {
   "name": "mpvue-calendar-rzt",
-  "version": "1.0.0-beta",
+  "version": "1.0.3-beta",
   "description": "vue calendar mpvue-calendar-rzt vue-calendar",
   "main": "src/mpvue-calendar.vue",
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "publish": "npm publish --registry https://registry.npmjs.org"
+    "lint": "vue-cli-service lint"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,7 @@
   ],
   "author": "lichangrui <lichangrui@rongzhitong.com>",
   "license": "MIT",
+  "private": false,
   "bugs": {
     "url": "https://github.com/crui318/mpvue-calendar-rzt/issues"
   },

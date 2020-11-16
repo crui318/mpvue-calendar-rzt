@@ -47,8 +47,9 @@
             class="mc-day"
             :style="itemStyle"
           >
-            <span v-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
-            <span :class="[{'mc-date-red': k2 === (monFirst ? 5 : 0) || k2 === 6}, 'calendar-date']" v-else>{{child.day}}</span>
+            <span v-if="child.isShowWeeks" class="mc-week" :style="weekStyle">{{child.week}}</span>
+            <span v-else-if="showToday.show && child.isToday" class="mc-today calendar-date">{{showToday.text}}</span>
+            <span :class="[{'mc-date-red': k2 === ((monFirst ? 5 : 0) + (showWeek ? 1 : 0)) || k2 === (6 + (showWeek ? 1 : 0))}, 'calendar-date']" v-else>{{child.day}}</span>
             <div class="slot-element" v-if="!!child.content">{{child.content}}</div>
             <div class="mc-text remark-text" v-if="child.eventName && !clean">{{child.eventName}}</div>
             <div class="mc-dot" v-if="child.eventName && clean" />
@@ -163,8 +164,8 @@
       },
       weeks: {
         type: Array,
-        default() {//(this.showWeek ? ['周数'] : []).concat()
-          return this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六'];
+        default() {
+          return (this.showWeek ? ['周数'] : []).concat(this.monFirst ? ['一', '二', '三', '四', '五', '六', '日'] : ['日', '一', '二', '三', '四', '五', '六']);
         }
       },
       months: {
@@ -244,6 +245,13 @@
           height: `${this.itemWidth}px`,
           fontSize: `${this.itemWidth / 4}px`,
           lineHeight: this.lunar ? `${this.itemWidth / 1.5}px` : `${this.itemWidth}px`
+        };
+      },
+      weekStyle() {
+        return {
+          height: `${this.itemWidth}px`,
+          fontSize: `${this.itemWidth / 3}px`,
+          lineHeight: `${this.itemWidth}px`
         };
       }
     },
@@ -582,6 +590,7 @@
           this.days = daysDeepCopy;
           this.monthRangeDays = [this.days];
         }
+        this.resetWeekData();
       },
       render(y, m, renderer, payload) {
         const {weekSwitch} = this;
@@ -779,6 +788,7 @@
           };
         }
         this.monthRangeDays = [this.days];
+        this.resetWeekData();
         isWatchRenderValue && this.updateHeadMonth();
         return this.days;
       },
@@ -818,6 +828,7 @@
           return this.render(yearParam, monthParam - 1, renderer);
         });
         this.monthRangeDays = monthsRange;
+        this.resetWeekData();
       },
       isRendeRangeMode(renderer) {
         this.isMonthRange = !!this.monthRange.length;
@@ -947,6 +958,7 @@
           this.weekIndex = this.weekIndex - 1;
           this.days = [this.monthDays[this.weekIndex]];
           this.monthRangeDays = [this.days];
+          this.resetWeekData();
           this.setMonthRangeofWeekSwitch();
           this.$emit('prev', this.year, this.month + 1, this.weekIndex);
         };
@@ -999,6 +1011,7 @@
           this.weekIndex = this.weekIndex + 1;
           this.days = [this.monthDays[this.weekIndex]];
           this.monthRangeDays = [this.days];
+          this.resetWeekData();
           this.setMonthRangeofWeekSwitch();
           this.$emit('next', this.year, this.month + 1, this.weekIndex);
         };
@@ -1014,6 +1027,7 @@
       },
       select(k1, k2, data, e, monthIndex) {
         e && e.stopPropagation();
+        if (data.isShowWeeks) return;
         const weekSwitch = this.weekSwitch;
         if (data.lastMonth && !weekSwitch) {
           return this.prev(e);
@@ -1173,7 +1187,64 @@
       },
       resize() {
         const calendarRef = this.$refs.calendar;
-        this.itemWidth = (calendarRef.clientWidth/7 - 4).toFixed(5);
+        this.itemWidth = (calendarRef.clientWidth/(this.showWeek ? 8 : 7) - 4).toFixed(5);
+      },
+      resetWeekData() {
+        if (!this.showWeek) return;
+        for (let i = 0; i < this.monthRangeDays.length; i++) {
+            for (let j = 0; j < this.monthRangeDays[i].length; j++) {
+                let strweek = '';
+                let strdate = this.getMonthDate(this.monthRangeDays[i][j], j);
+                if (!!strdate) {
+                    strweek = this.getWeek(strdate) + '周';
+                }
+                this.monthRangeDays[i][j] = [{
+                    "selected": false,
+                    "week": strweek,
+                    "isLunarFestival": false,
+                    "isGregorianFestival": false,
+                    "isTerm": false,
+                    "isShowWeeks": true
+                }].concat(this.monthRangeDays[i][j]);
+            }
+        }
+      },
+      getMonthDate(days, type) {
+        let result = '';
+        if (type > 0) {
+            for (let i = 0; i < days.length; ++i) {
+                if (!!days[i].date) {
+                    result = days[i].date;
+                    break;
+                }
+            }
+        }
+        else {
+            let j = days.length - 1;
+            for (; j >= 0; --j) {
+                if (!!days[j].date) {
+                    result = days[j].date;
+                    break;
+                }
+            }
+        }
+        return result;
+      },
+      getWeek(dt) {
+        var today = new Date(dt);
+        var firstDay = new Date(today.getFullYear(), 0, 1);
+        var dayOfWeek = firstDay.getDay();
+        var spendDay = 0;
+        if (this.monFirst && dayOfWeek != 1) {
+          spendDay = 0 == dayOfWeek ? 6 : (dayOfWeek - 1);
+        }
+        else if (!this.monFirst && dayOfWeek != 0) {
+          spendDay = dayOfWeek;
+        }
+        firstDay = new Date(today.getFullYear(), 0, 1 - spendDay);
+        var d = Math.ceil((today.valueOf() - firstDay.valueOf()) / 86400000);
+        var result = Math.floor(d / 7);
+        return result+1;
       }
     }
   };
